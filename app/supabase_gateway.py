@@ -234,5 +234,8 @@ def bootstrap_default_admin(gateway, username, password, logger=None):
         if logger:
             logger.warning("Usuario administrador inicial criado: %s", normalized)
     except SupabaseError as exc:
+        message = str(exc).lower()
+        if "23505" in message or "duplicate key" in message:
+            return
         if logger:
             logger.warning("Nao foi possivel criar o administrador inicial: %s", exc)
