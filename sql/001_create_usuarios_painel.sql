@@ -135,3 +135,27 @@ create trigger usuarios_painel_definir_atualizado_em
 before update on bot_atendimento_ti.usuarios_painel
 for each row
 execute function bot_atendimento_ti.definir_atualizado_em();
+
+-- Permissoes para uso do schema pela API REST do Supabase.
+-- Ainda e necessario adicionar bot_atendimento_ti em:
+-- Project Settings > API > Exposed schemas.
+grant usage on schema bot_atendimento_ti to anon, authenticated, service_role;
+
+-- A aplicacao Flask usa service_role no backend, entao ela precisa de acesso total.
+grant all on all tables in schema bot_atendimento_ti to service_role;
+grant all on all routines in schema bot_atendimento_ti to service_role;
+grant all on all sequences in schema bot_atendimento_ti to service_role;
+
+-- Acesso publico/autenticado seguro para consulta da base pelo N8N ou clientes externos.
+-- Nao concedemos acesso publico a usuarios_painel porque ela contem senha_hash.
+grant select on table bot_atendimento_ti.base_conhecimento to anon, authenticated;
+revoke all on table bot_atendimento_ti.usuarios_painel from anon, authenticated;
+
+alter default privileges for role postgres in schema bot_atendimento_ti
+grant all on tables to service_role;
+
+alter default privileges for role postgres in schema bot_atendimento_ti
+grant all on routines to service_role;
+
+alter default privileges for role postgres in schema bot_atendimento_ti
+grant all on sequences to service_role;
