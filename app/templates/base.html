@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}KB TI{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <header class="app-header">
+      <a class="brand" href="{{ url_for('main.index') }}">KB TI</a>
+      {% if g.user %}
+        <nav class="top-nav" aria-label="Principal">
+          {% if current_user_can("can_read") %}
+            <a href="{{ url_for('main.kb_list') }}">Base</a>
+          {% endif %}
+          {% if current_user_can("can_create") %}
+            <a href="{{ url_for('main.kb_new') }}">Novo</a>
+          {% endif %}
+          {% if current_user_can("can_manage_users") %}
+            <a href="{{ url_for('main.users_list') }}">Usuarios</a>
+          {% endif %}
+        </nav>
+        <div class="session-box">
+          <span>{{ g.user.username }}</span>
+          <form action="{{ url_for('main.logout') }}" method="post">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            <button class="button ghost" type="submit">Sair</button>
+          </form>
+        </div>
+      {% endif %}
+    </header>
+
+    <main class="page">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-stack" role="status" aria-live="polite">
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>

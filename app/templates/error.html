@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}{{ code }} | KB TI{% endblock %}
+
+{% block content %}
+  <section class="empty-state">
+    <h1>{{ code }}</h1>
+    <p>{{ message }}</p>
+    <a class="button secondary" href="{{ url_for('main.index') }}">Voltar</a>
+  </section>
+{% endblock %}

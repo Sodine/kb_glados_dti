@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Base | KB TI{% endblock %}
+
+{% block content %}
+  <section class="section-heading">
+    <div>
+      <h1>Base de conhecimento</h1>
+      <p>{{ records|length }} registro{{ "" if records|length == 1 else "s" }}</p>
+    </div>
+    {% if current_user_can("can_create") %}
+      <a class="button primary" href="{{ url_for('main.kb_new') }}">Novo registro</a>
+    {% endif %}
+  </section>
+
+  {% if records %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Assunto</th>
+            <th>Resumo</th>
+            <th class="actions-col">Acoes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in records %}
+            <tr>
+              <td class="strong">{{ record.assunto }}</td>
+              <td>{{ record.resumo }}</td>
+              <td class="row-actions">
+                {% if current_user_can("can_edit") %}
+                  <a class="button small secondary" href="{{ url_for('main.kb_edit', record_id=record.id) }}">Editar</a>
+                {% endif %}
+                {% if current_user_can("can_delete") %}
+                  <form method="post" action="{{ url_for('main.kb_delete', record_id=record.id) }}" onsubmit="return confirm('Excluir este registro?');">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                    <button class="button small danger" type="submit">Excluir</button>
+                  </form>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <section class="empty-state">
+      <h2>Nenhum registro</h2>
+      {% if current_user_can("can_create") %}
+        <a class="button primary" href="{{ url_for('main.kb_new') }}">Criar registro</a>
+      {% endif %}
+    </section>
+  {% endif %}
+{% endblock %}

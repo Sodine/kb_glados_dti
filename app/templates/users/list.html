@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Usuarios | KB TI{% endblock %}
+
+{% block content %}
+  <section class="section-heading">
+    <div>
+      <h1>Usuarios</h1>
+      <p>{{ users|length }} usuario{{ "" if users|length == 1 else "s" }}</p>
+    </div>
+    <a class="button primary" href="{{ url_for('main.users_new') }}">Novo usuario</a>
+  </section>
+
+  {% if users %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Status</th>
+            <th>Permissoes</th>
+            <th class="actions-col">Acoes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+            <tr>
+              <td class="strong">{{ user.username }}</td>
+              <td>
+                <span class="badge {{ 'ok' if user.is_active else 'muted' }}">
+                  {{ "Ativo" if user.is_active else "Inativo" }}
+                </span>
+              </td>
+              <td class="permission-list">
+                {% for key, label in PERMISSIONS.items() %}
+                  {% if user[key] %}
+                    <span class="badge">{{ label }}</span>
+                  {% endif %}
+                {% endfor %}
+              </td>
+              <td class="row-actions">
+                <a class="button small secondary" href="{{ url_for('main.users_edit', user_id=user.id) }}">Editar</a>
+                {% if user.id != g.user.id %}
+                  <form method="post" action="{{ url_for('main.users_delete', user_id=user.id) }}" onsubmit="return confirm('Excluir este usuario?');">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                    <button class="button small danger" type="submit">Excluir</button>
+                  </form>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <section class="empty-state">
+      <h2>Nenhum usuario</h2>
+      <a class="button primary" href="{{ url_for('main.users_new') }}">Criar usuario</a>
+    </section>
+  {% endif %}
+{% endblock %}

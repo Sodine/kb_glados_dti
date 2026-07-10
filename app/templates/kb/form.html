@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}{{ "Novo registro" if mode == "create" else "Editar registro" }} | KB TI{% endblock %}
+
+{% block content %}
+  <section class="section-heading">
+    <div>
+      <h1>{{ "Novo registro" if mode == "create" else "Editar registro" }}</h1>
+    </div>
+    {% if current_user_can("can_read") %}
+      <a class="button secondary" href="{{ url_for('main.kb_list') }}">Voltar</a>
+    {% endif %}
+  </section>
+
+  <form class="panel form-grid" method="post">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+    <label>
+      Assunto
+      <input type="text" name="assunto" maxlength="180" value="{{ record.assunto or '' }}" required>
+    </label>
+
+    <label>
+      Resumo
+      <textarea name="resumo" rows="5" required>{{ record.resumo or '' }}</textarea>
+    </label>
+
+    <label>
+      Instrucao
+      <textarea name="instrucao" rows="10" required>{{ record.instrucao or '' }}</textarea>
+    </label>
+
+    <div class="form-actions">
+      <button class="button primary" type="submit">Salvar</button>
+    </div>
+  </form>
+{% endblock %}

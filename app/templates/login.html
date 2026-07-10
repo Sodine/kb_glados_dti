@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Entrar | KB TI{% endblock %}
+
+{% block content %}
+  <section class="auth-shell">
+    <form class="auth-card" method="post">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+      {% if next_url %}
+        <input type="hidden" name="next" value="{{ next_url }}">
+      {% endif %}
+      <div>
+        <h1>Entrar</h1>
+        <p>Base de conhecimento de atendimento de TI</p>
+      </div>
+
+      <label>
+        Usuario
+        <input type="text" name="username" autocomplete="username" required autofocus>
+      </label>
+
+      <label>
+        Senha
+        <input type="password" name="password" autocomplete="current-password" required>
+      </label>
+
+      <button class="button primary full" type="submit">Acessar</button>
+    </form>
+  </section>
+{% endblock %}
